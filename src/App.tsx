@@ -9,6 +9,7 @@ import Dashboard from './views/Dashboard';
 import KitchenManagement from './views/KitchenManagement';
 import FloorManagement from './views/FloorManagement';
 import GuestManagement from './views/GuestManagement';
+import Settings from './views/Settings';
 import AIAssistant from './components/AIAssistant';
 
 // Customer Views
@@ -29,6 +30,7 @@ const AnimatedRoutes = ({ mode }: { mode: 'manager' | 'customer' }) => {
             <Route path="/kitchen" element={<KitchenManagement />} />
             <Route path="/floor" element={<FloorManagement />} />
             <Route path="/guests" element={<GuestManagement />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </>
         ) : (

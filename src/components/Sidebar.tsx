@@ -67,10 +67,25 @@ const Sidebar: React.FC = () => {
       </nav>
 
       <div style={{ marginTop: 'auto' }}>
-        <button className="glass-button secondary" style={{ width: '100%', justifyContent: 'flex-start', padding: '0.75rem 1rem' }}>
+        <NavLink
+          to="/settings"
+          style={({ isActive }) => ({
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            padding: '0.75rem 1rem',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            color: isActive ? 'white' : 'var(--text-secondary)',
+            background: isActive ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+            border: '1px solid var(--glass-border)',
+            transition: 'all 0.2s ease',
+            width: '100%'
+          })}
+        >
           <Settings size={20} />
-          <span>Settings</span>
-        </button>
+          <span style={{ fontWeight: 500 }}>Settings</span>
+        </NavLink>
       </div>
     </motion.div>
   );
