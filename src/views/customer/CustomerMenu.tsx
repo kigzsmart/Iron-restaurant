@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X, ShoppingBag, Check } from 'lucide-react';
+import { Plus, X, ShoppingBag, Check, Trash2 } from 'lucide-react';
 
 interface MenuItem {
   id: number;
@@ -10,6 +10,14 @@ interface MenuItem {
   desc: string;
   options?: { name: string; choices: string[] }[];
   addons?: { name: string; price: number }[];
+}
+
+interface CartItem {
+  id: string;
+  menuItem: MenuItem;
+  selections: Record<string, string>;
+  selectedAddons: string[];
+  totalPrice: number;
 }
 
 const menuItems: MenuItem[] = [
@@ -33,15 +41,51 @@ const menuItems: MenuItem[] = [
 
 const CustomerMenu: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
-  const [cartCount, setCartCount] = useState(0);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [showToast, setShowToast] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+
+  // Modal State for currently configuring item
+  const [currentSelections, setCurrentSelections] = useState<Record<string, string>>({});
+  const [currentAddons, setCurrentAddons] = useState<Set<string>>(new Set());
+
+  const openCustomizationModal = (item: MenuItem) => {
+    setSelectedItem(item);
+    setCurrentSelections({});
+    setCurrentAddons(new Set());
+  };
+
+  const calculateCurrentItemPrice = () => {
+    if (!selectedItem) return 0;
+    let price = selectedItem.price;
+    // Add size upcharge for Lemonade as a hardcoded example, or calculate based on options if data structure supported it.
+    if (currentSelections['Size'] === 'Large (+$2.00)') price += 2;
+
+    currentAddons.forEach(addonName => {
+      const addonObj = selectedItem.addons?.find(a => a.name === addonName);
+      if (addonObj) price += addonObj.price;
+    });
+    return price;
+  };
 
   const handleAddToCart = () => {
-    setCartCount(prev => prev + 1);
+    if (!selectedItem) return;
+    
+    const newItem: CartItem = {
+      id: Math.random().toString(36).substr(2, 9),
+      menuItem: selectedItem,
+      selections: { ...currentSelections },
+      selectedAddons: Array.from(currentAddons),
+      totalPrice: calculateCurrentItemPrice()
+    };
+
+    setCartItems(prev => [...prev, newItem]);
     setSelectedItem(null);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
+
+  const cartTotal = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
 
   return (
     <motion.div
@@ -56,9 +100,9 @@ const CustomerMenu: React.FC = () => {
           <h1 style={{ marginBottom: '0.5rem' }}>Our Menu</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Explore our delicious offerings and add to your order.</p>
         </div>
-        <button className="glass-button">
+        <button className="glass-button" onClick={() => setShowCart(true)}>
           <ShoppingBag size={20} />
-          Cart ({cartCount})
+          Cart ({cartItems.length})
         </button>
       </div>
 
@@ -71,7 +115,7 @@ const CustomerMenu: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: idx * 0.05 }}
             style={{ display: 'flex', flexDirection: 'column', gap: '1rem', cursor: 'pointer' }}
-            onClick={() => setSelectedItem(item)}
+            onClick={() => openCustomizationModal(item)}
           >
             <div className="flex-between">
               <span style={{ fontSize: '0.75rem', color: 'var(--primary)', background: 'rgba(59, 130, 246, 0.1)', padding: '0.25rem 0.75rem', borderRadius: '12px' }}>
@@ -88,7 +132,7 @@ const CustomerMenu: React.FC = () => {
             <button 
               className="glass-button secondary" 
               style={{ marginTop: 'auto', width: '100%', display: 'flex', justifyContent: 'center' }}
-              onClick={(e) => { e.stopPropagation(); setSelectedItem(item); }}
+              onClick={(e) => { e.stopPropagation(); openCustomizationModal(item); }}
             >
               <Plus size={18} /> Customize & Add
             </button>
@@ -135,7 +179,11 @@ const CustomerMenu: React.FC = () => {
               {selectedItem.options?.map((opt, i) => (
                 <div key={i}>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>{opt.name}</label>
-                  <select style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--glass-border)', outline: 'none' }}>
+                  <select 
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--glass-border)', outline: 'none' }}
+                    onChange={e => setCurrentSelections(prev => ({ ...prev, [opt.name]: e.target.value }))}
+                  >
+                    <option value="" disabled selected>Select an option...</option>
                     {opt.choices.map((c, j) => <option key={j} value={c}>{c}</option>)}
                   </select>
                 </div>
@@ -147,7 +195,15 @@ const CustomerMenu: React.FC = () => {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     {selectedItem.addons.map((addon, i) => (
                       <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                        <input type="checkbox" />
+                        <input 
+                          type="checkbox" 
+                          onChange={(e) => {
+                            const newSet = new Set(currentAddons);
+                            if (e.target.checked) newSet.add(addon.name);
+                            else newSet.delete(addon.name);
+                            setCurrentAddons(newSet);
+                          }}
+                        />
                         <span>{addon.name} (+${addon.price.toFixed(2)})</span>
                       </label>
                     ))}
@@ -156,13 +212,100 @@ const CustomerMenu: React.FC = () => {
               ) : null}
 
               <div className="flex-between" style={{ marginTop: '1rem', paddingTop: '1.5rem', borderTop: '1px solid var(--glass-border)' }}>
-                <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>${selectedItem.price.toFixed(2)}</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>${calculateCurrentItemPrice().toFixed(2)}</span>
                 <button className="glass-button" onClick={handleAddToCart}>
                   <ShoppingBag size={18} /> Add to Order
                 </button>
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cart Drawer */}
+      <AnimatePresence>
+        {showCart && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{
+                position: 'fixed',
+                top: 0, left: 0, right: 0, bottom: 0,
+                background: 'rgba(0,0,0,0.6)',
+                backdropFilter: 'blur(4px)',
+                zIndex: 1000,
+              }}
+              onClick={() => setShowCart(false)}
+            />
+            {/* Drawer */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="glass-panel"
+              style={{
+                position: 'fixed',
+                top: 0, right: 0, bottom: 0,
+                width: '100%', maxWidth: '400px',
+                borderRadius: '16px 0 0 16px',
+                zIndex: 1001,
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '2rem',
+                margin: 0
+              }}
+            >
+              <div className="flex-between" style={{ marginBottom: '2rem' }}>
+                <h2 style={{ margin: 0 }}>Your Order</h2>
+                <button onClick={() => setShowCart(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                {cartItems.length === 0 ? (
+                  <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: '2rem' }}>Your cart is empty.</p>
+                ) : (
+                  cartItems.map(item => (
+                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
+                      <div>
+                        <h4 style={{ margin: '0 0 0.25rem 0' }}>{item.menuItem.name}</h4>
+                        {Object.entries(item.selections).map(([k, v]) => (
+                          <div key={k} style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>- {v}</div>
+                        ))}
+                        {item.selectedAddons.map(addon => (
+                          <div key={addon} style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>+ {addon}</div>
+                        ))}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+                        <span style={{ fontWeight: 'bold' }}>${item.totalPrice.toFixed(2)}</span>
+                        <button 
+                          onClick={() => setCartItems(prev => prev.filter(c => c.id !== item.id))}
+                          style={{ background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                        >
+                          <Trash2 size={14} /> Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div style={{ paddingTop: '1.5rem', borderTop: '1px solid var(--glass-border)', marginTop: 'auto' }}>
+                <div className="flex-between" style={{ marginBottom: '1.5rem' }}>
+                  <span style={{ fontSize: '1.25rem' }}>Total</span>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>${cartTotal.toFixed(2)}</span>
+                </div>
+                <button className="glass-button" style={{ width: '100%', justifyContent: 'center' }} disabled={cartItems.length === 0}>
+                  Checkout
+                </button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
@@ -189,7 +332,7 @@ const CustomerMenu: React.FC = () => {
               fontWeight: 500
             }}
           >
-            <Check size={20} /> Item seamlessly added to cart!
+            <Check size={20} /> Item added to cart!
           </motion.div>
         )}
       </AnimatePresence>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
+import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 
 // Manager Views
 import Sidebar from './components/Sidebar';
@@ -26,11 +27,11 @@ const AnimatedRoutes = ({ mode }: { mode: 'manager' | 'customer' }) => {
         {mode === 'manager' ? (
           <>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/kitchen" element={<KitchenManagement />} />
-            <Route path="/floor" element={<FloorManagement />} />
-            <Route path="/guests" element={<GuestManagement />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/dashboard" element={<SignedIn><Dashboard /></SignedIn>} />
+            <Route path="/kitchen" element={<SignedIn><KitchenManagement /></SignedIn>} />
+            <Route path="/floor" element={<SignedIn><FloorManagement /></SignedIn>} />
+            <Route path="/guests" element={<SignedIn><GuestManagement /></SignedIn>} />
+            <Route path="/settings" element={<SignedIn><Settings /></SignedIn>} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </>
         ) : (
@@ -56,7 +57,16 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="app-layout">
-        {mode === 'manager' ? <Sidebar /> : <CustomerSidebar />}
+        {mode === 'manager' ? (
+          <>
+            <SignedIn>
+              <Sidebar />
+            </SignedIn>
+          </>
+        ) : (
+          <CustomerSidebar />
+        )}
+        
         <main className="view-container" style={{ position: 'relative' }}>
           
           {/* View Switcher Toggle */}
@@ -73,10 +83,25 @@ const App: React.FC = () => {
           </div>
 
           <div style={{ paddingTop: '3rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <AnimatedRoutes mode={mode} />
+            {mode === 'manager' ? (
+              <>
+                <SignedIn>
+                  <AnimatedRoutes mode={mode} />
+                </SignedIn>
+                <SignedOut>
+                  <RedirectToSignIn />
+                </SignedOut>
+              </>
+            ) : (
+              <AnimatedRoutes mode={mode} />
+            )}
           </div>
         </main>
-        {mode === 'manager' && <AIAssistant />}
+        {mode === 'manager' && (
+          <SignedIn>
+            <AIAssistant />
+          </SignedIn>
+        )}
       </div>
     </Router>
   );

@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, UtensilsCrossed, Grid2x2, Users, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { UserButton } from '@clerk/clerk-react';
 
 const Sidebar: React.FC = () => {
   const menuItems = [
@@ -66,7 +67,7 @@ const Sidebar: React.FC = () => {
         ))}
       </nav>
 
-      <div style={{ marginTop: 'auto' }}>
+      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <NavLink
           to="/settings"
           style={({ isActive }) => ({
@@ -86,6 +87,11 @@ const Sidebar: React.FC = () => {
           <Settings size={20} />
           <span style={{ fontWeight: 500 }}>Settings</span>
         </NavLink>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem' }}>
+          <UserButton afterSignOutUrl="/" />
+          <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Account</span>
+        </div>
       </div>
     </motion.div>
   );
