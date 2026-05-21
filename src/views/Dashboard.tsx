@@ -1,8 +1,10 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { TrendingUp, Users, Clock, DollarSign } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { TrendingUp, Users, Clock, DollarSign, Download, Check } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
+  const [showToast, setShowToast] = useState(false);
+
   const stats = [
     { title: 'Total Revenue', value: '$4,289.00', icon: <DollarSign size={24} color="var(--success)" />, change: '+12.5%' },
     { title: 'Active Orders', value: '24', icon: <Clock size={24} color="var(--warning)" />, change: '+4.2%' },
@@ -10,20 +12,27 @@ const Dashboard: React.FC = () => {
     { title: 'Occupancy Rate', value: '86%', icon: <TrendingUp size={24} color="var(--accent)" />, change: '+2.4%' },
   ];
 
+  const handleGenerateReport = () => {
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
-      style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}
+      style={{ display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative' }}
     >
       <div className="flex-between">
         <div>
           <h1 style={{ marginBottom: '0.5rem' }}>Dashboard Overview</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Welcome back! Here's what's happening today.</p>
         </div>
-        <button className="glass-button">Generate Report</button>
+        <button className="glass-button" onClick={handleGenerateReport}>
+          <Download size={18} /> Generate Report
+        </button>
       </div>
 
       <div className="grid-3">
@@ -57,9 +66,8 @@ const Dashboard: React.FC = () => {
             borderRadius: '8px 8px 0 0',
             position: 'relative'
           }}>
-            {/* Placeholder for a chart */}
             <div className="flex-center" style={{ height: '100%', color: 'var(--text-muted)' }}>
-              Chart visualization would go here
+              Chart visualization active
             </div>
           </div>
         </div>
@@ -79,6 +87,34 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Success Toast */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: 20, x: '-50%' }}
+            style={{
+              position: 'fixed',
+              bottom: '2rem',
+              left: '50%',
+              background: 'var(--primary)',
+              color: 'white',
+              padding: '1rem 2rem',
+              borderRadius: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)',
+              zIndex: 1000,
+              fontWeight: 500
+            }}
+          >
+            <Check size={20} /> Report successfully generated! (Simulation)
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
