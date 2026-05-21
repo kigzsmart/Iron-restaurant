@@ -7,6 +7,7 @@ import Dashboard from './views/Dashboard';
 import KitchenManagement from './views/KitchenManagement';
 import FloorManagement from './views/FloorManagement';
 import GuestManagement from './views/GuestManagement';
+import AIAssistant from './components/AIAssistant';
 
 const App: React.FC = () => {
   return (
@@ -24,6 +25,7 @@ const App: React.FC = () => {
             </Routes>
           </AnimatePresence>
         </main>
+        <AIAssistant />
       </div>
     </Router>
   );
