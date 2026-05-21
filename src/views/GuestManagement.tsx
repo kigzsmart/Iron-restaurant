@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, MoreHorizontal, UserPlus, Check } from 'lucide-react';
+import { Plus, Search, MoreHorizontal, UserPlus } from 'lucide-react';
 
 const GuestManagement: React.FC = () => {
   const initialGuests = [
@@ -10,7 +10,7 @@ const GuestManagement: React.FC = () => {
     { id: 4, name: 'Diana Prince', status: 'Reserved', time: '8:30 PM', partySize: 2, contact: '+1 444 987 6543' },
   ];
 
-  const [guests, setGuests] = useState(initialGuests);
+  const [guests] = useState(initialGuests);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('All');
   const [showToast, setShowToast] = useState(false);
