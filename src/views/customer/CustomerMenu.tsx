@@ -21,22 +21,65 @@ interface CartItem {
 }
 
 const menuItems: MenuItem[] = [
+  // APPETIZERS
   { 
-    id: 1, name: 'Truffle Pasta', price: 24.00, category: 'Mains', desc: 'Handmade pasta with black truffle shavings.',
-    addons: [{ name: 'Extra Truffle', price: 5.00 }, { name: 'Gluten Free Pasta', price: 2.00 }]
+    id: 1, name: 'Truffle Parmesan Fries', price: 12.00, category: 'Appetizers', desc: 'Crispy thick-cut fries tossed in white truffle oil and parmesan.',
+    options: [{ name: 'Dipping Sauce', choices: ['Garlic Aioli', 'Spicy Mayo', 'Ketchup', 'No Sauce'] }],
+    addons: [{ name: 'Extra Truffle Oil', price: 2.00 }, { name: 'Add Bacon Bits', price: 3.00 }]
+  },
+  { id: 2, name: 'Crispy Calamari', price: 16.00, category: 'Appetizers', desc: 'Lightly dusted and fried, served with lemon herb tartare.',
+    addons: [{ name: 'Extra Tartare Sauce', price: 1.50 }]
+  },
+
+  // MAINS
+  { 
+    id: 3, name: 'Signature Ribeye Steak', price: 45.00, category: 'Mains', desc: '14oz prime ribeye, garlic mash, grilled asparagus.',
+    options: [
+      { name: 'Doneness', choices: ['Rare', 'Medium Rare', 'Medium', 'Medium Well', 'Well Done'] },
+      { name: 'Base', choices: ['Garlic Mash', 'Sweet Potato Fries', 'Steamed Veggies'] }
+    ],
+    addons: [{ name: 'Peppercorn Sauce', price: 3.00 }, { name: 'Garlic Butter', price: 2.00 }, { name: 'Grilled Shrimp (3)', price: 8.00 }]
   },
   { 
-    id: 2, name: 'Ribeye Steak', price: 42.00, category: 'Mains', desc: '12oz prime ribeye, garlic mash, asparagus.',
-    options: [{ name: 'Doneness', choices: ['Rare', 'Medium Rare', 'Medium', 'Medium Well', 'Well Done'] }],
-    addons: [{ name: 'Peppercorn Sauce', price: 3.00 }, { name: 'Garlic Butter', price: 2.00 }]
+    id: 4, name: 'Build-Your-Own Burger', price: 18.00, category: 'Mains', desc: 'Premium beef or plant-based patty on a toasted brioche bun.',
+    options: [
+      { name: 'Protein', choices: ['Beef Patty', 'Vegan Patty', 'Grilled Chicken'] },
+      { name: 'Cheese', choices: ['Cheddar', 'Swiss', 'Vegan Cheddar', 'No Cheese'] }
+    ],
+    addons: [{ name: 'Extra Patty', price: 6.00 }, { name: 'Avocado', price: 2.50 }, { name: 'Crispy Bacon', price: 3.00 }]
   },
-  { id: 3, name: 'Caesar Salad', price: 14.00, category: 'Starters', desc: 'Crisp romaine, parmesan, house croutons.' },
-  { id: 4, name: 'Vegan Burger', price: 18.00, category: 'Mains', desc: 'Plant-based patty, vegan cheddar, fries.' },
-  { id: 5, name: 'Margherita Pizza', price: 20.00, category: 'Mains', desc: 'San Marzano tomatoes, fresh mozzarella, basil.' },
   { 
-    id: 6, name: 'Lemonade', price: 5.00, category: 'Drinks', desc: 'Freshly squeezed lemon, mint.',
-    options: [{ name: 'Size', choices: ['Regular', 'Large (+$2.00)'] }]
+    id: 5, name: 'Wild Mushroom Risotto', price: 26.00, category: 'Mains', desc: 'Arborio rice, porcini broth, shaved pecorino.',
+    addons: [{ name: 'Grilled Chicken', price: 6.00 }, { name: 'Seared Scallops', price: 12.00 }]
   },
+  { 
+    id: 6, name: 'Spicy Vodka Pasta', price: 22.00, category: 'Mains', desc: 'Rigatoni in a creamy, spicy tomato vodka sauce.',
+    options: [{ name: 'Spice Level', choices: ['Mild', 'Medium', 'Hot', 'Extra Hot'] }],
+    addons: [{ name: 'Gluten-Free Pasta', price: 2.00 }, { name: 'Burrata', price: 6.00 }]
+  },
+
+  // SIDES
+  { id: 7, name: 'Charred Asparagus', price: 9.00, category: 'Sides', desc: 'Grilled with lemon zest and olive oil.' },
+  { id: 8, name: 'Mac & Cheese', price: 11.00, category: 'Sides', desc: 'Five-cheese blend baked with a breadcrumb crust.',
+    addons: [{ name: 'Truffle Oil', price: 3.00 }]
+  },
+
+  // DESSERTS
+  { 
+    id: 9, name: 'Molten Chocolate Cake', price: 14.00, category: 'Desserts', desc: 'Warm chocolate center with a scoop of gelato.',
+    options: [{ name: 'Gelato Flavor', choices: ['Vanilla Bean', 'Salted Caramel', 'Pistachio'] }]
+  },
+  { id: 10, name: 'Classic Tiramisu', price: 12.00, category: 'Desserts', desc: 'Espresso-soaked ladyfingers, mascarpone cream.' },
+
+  // DRINKS
+  { 
+    id: 11, name: 'Craft Lemonade', price: 6.00, category: 'Drinks', desc: 'Freshly squeezed lemons with organic cane sugar.',
+    options: [{ name: 'Size', choices: ['Regular', 'Large (+$2.00)'] }, { name: 'Ice Level', choices: ['Normal Ice', 'Less Ice', 'No Ice'] }]
+  },
+  { 
+    id: 12, name: 'House Cabernet Sauvignon', price: 12.00, category: 'Drinks', desc: 'Full-bodied red wine with notes of blackberry.',
+    options: [{ name: 'Serving', choices: ['Glass', 'Bottle (+$35.00)'] }]
+  }
 ];
 
 const CustomerMenu: React.FC = () => {

@@ -18,10 +18,34 @@ const KitchenManagement: React.FC = () => {
   ];
 
   const [orders, setOrders] = useState<Order[]>([
-    { id: '1042', status: 'new', items: ['2x Truffle Pasta', '1x Caesar Salad'], time: '2 mins ago', table: '12' },
-    { id: '1043', status: 'new', items: ['1x Ribeye Steak', '1x Garlic Mash'], time: 'Just now', table: '04' },
-    { id: '1039', status: 'cooking', items: ['3x Vegan Burger', '3x Sweet Potato Fries'], time: '12 mins ago', table: '08' },
-    { id: '1035', status: 'ready', items: ['1x Margherita Pizza', '2x Lemonade'], time: '18 mins ago', table: '15' },
+    { 
+      id: '1042', status: 'new', time: '2 mins ago', table: '12',
+      items: [
+        '1x Signature Ribeye Steak\n  - Medium Rare\n  - Base: Sweet Potato Fries\n  + Peppercorn Sauce', 
+        '1x Craft Lemonade\n  - Size: Large\n  - Less Ice'
+      ] 
+    },
+    { 
+      id: '1043', status: 'new', time: 'Just now', table: '04',
+      items: [
+        '2x Build-Your-Own Burger\n  - Protein: Beef Patty\n  - Cheese: Swiss\n  + Crispy Bacon',
+        '1x Truffle Parmesan Fries\n  - Dipping Sauce: Garlic Aioli'
+      ] 
+    },
+    { 
+      id: '1039', status: 'cooking', time: '12 mins ago', table: '08',
+      items: [
+        '1x Spicy Vodka Pasta\n  - Spice Level: Extra Hot\n  + Burrata',
+        '1x House Cabernet Sauvignon\n  - Serving: Bottle'
+      ] 
+    },
+    { 
+      id: '1035', status: 'ready', time: '18 mins ago', table: '15',
+      items: [
+        '2x Molten Chocolate Cake\n  - Gelato: Salted Caramel', 
+        '1x Classic Tiramisu'
+      ] 
+    },
   ]);
 
   const moveOrder = (orderId: string, currentStatus: string) => {
@@ -79,11 +103,11 @@ const KitchenManagement: React.FC = () => {
                       <span style={{ background: 'rgba(255,255,255,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem' }}>Table {order.table}</span>
                     </div>
                     
-                    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem 0', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem 0', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                       {order.items.map((item, i) => (
-                        <li key={i} style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--text-secondary)' }}></span>
-                          {item}
+                        <li key={i} style={{ fontSize: '0.875rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem', whiteSpace: 'pre-wrap', lineHeight: '1.4' }}>
+                          <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--text-secondary)', marginTop: '0.4rem', flexShrink: 0 }}></span>
+                          <span>{item}</span>
                         </li>
                       ))}
                     </ul>
